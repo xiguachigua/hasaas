@@ -19,5 +19,5 @@ export function validUsername(str) {
   return valid_map.indexOf(str.trim()) >= 0
 }
 export function validmobile(str) {
-  return /^1[3-9]{9}$/.test(str)
+  return /^1[3-9]\d{9}$/.test(str)
 }

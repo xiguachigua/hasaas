@@ -44,7 +44,7 @@
         </span>
       </el-form-item>
 
-      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="handleLogin">登录</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
@@ -57,7 +57,7 @@
 
 <script>
 import { validmobile } from '@/utils/validate'
-
+import { mapActions } from 'vuex'
 export default {
 
   name: 'Login',
@@ -70,17 +70,20 @@ export default {
       }
     }
     return {
-
       loginForm: {
         mobile: '13800000002',
         password: '123456'
       },
       loginRules: {
-        mobile: [{ required: true, trigger: ['blur', 'change'], message: '请输入手机号' },
-          { message: '请输入11为手机号', trigger: ['blur', 'change'], validator: cheanMonile }],
-        password: [{ required: true, trigger: ['blur', 'change'], message: '请输入密码' },
-          { min: 6, max: 16, message: '密码6到16位', trigger: ['blur', 'change'] }]
-      },
+        mobile: [
+          { required: true, message: '输入手机号', trigger: ['blur', 'change'] },
+          // 自定义校验手机号
+          { validator: cheanMonile, trigger: ['blur', 'change'] }
+        ],
+        password: [
+          { required: true, message: '输入密码', trigger: ['blur', 'change'] },
+          { min: 6, max: 16, message: '输入6到16位的密码', trigger: ['blur', 'change'] }
+        ] },
       loading: false,
       passwordType: 'password',
       redirect: undefined
@@ -95,6 +98,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -106,8 +110,12 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (!valid) return
+        this.loading = true
+        await this.login(this.loginForm)
+        this.loading = false
+        this.$router.push('/')
       })
     }
   }

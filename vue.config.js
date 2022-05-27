@@ -35,9 +35,10 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
-    }, proxy: {
+    },
+    proxy: {
       '/api': {
-        target: 'http://ihrm-java.itheima.net/'
+        target: 'http://ihrm-java.itheima.net'
       }
     }
 
