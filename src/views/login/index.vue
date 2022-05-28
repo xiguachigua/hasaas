@@ -1,5 +1,9 @@
 <template>
   <div class="login-container">
+    <!-- 必备属性
+    el-form   model  rules
+    el-form-item   prop
+    el-input       v-model -->
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <!-- 放置标题图片 @是设置的别名-->
@@ -23,7 +27,6 @@
           auto-complete="on"
         />
       </el-form-item>
-
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
@@ -44,8 +47,22 @@
         </span>
       </el-form-item>
 
-      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="handleLogin">登录</el-button>
-
+      <el-button
+        class="loginBtn"
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click="handleLogin"
+      >登录</el-button>
+      <!-- native  修饰符
+      将根组件上的原生事件绑定到组件内部的根元素上  原理 : 冒泡
+      组件内点击事件如果有  this.$emit('click')
+      组件内点击事件如果没有 this.$emit('click')
+      可以加.native
+      (封装一个组件(组件没有click)?怎么触发了?
+      1.子传父(将根组件上的原生事件绑定到组件内部的根元素上  原理 : 冒泡
+      2.加一个修饰符 native)  ,)-->
+      <!-- prevent阻止默认跳转 -->
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
         <span> 密码: 123456</span>
@@ -56,19 +73,20 @@
 </template>
 
 <script>
-import { validmobile } from '@/utils/validate'
+import { validMobile } from '@/utils/validate'
+// 导入   使用全局actions
 import { mapActions } from 'vuex'
 export default {
-
   name: 'Login',
   data() {
-    const cheanMonile = (_, value, callblock) => {
-      if (!validmobile(value)) {
-        return callblock(new Error('输入错误'))
+    const chcekMobile = (rule, value, callback) => {
+      if (!validMobile(value)) {
+        callback(new Error('输入错误'))
       } else {
-        callblock()
+        callback()
       }
     }
+
     return {
       loginForm: {
         mobile: '13800000002',
@@ -78,7 +96,7 @@ export default {
         mobile: [
           { required: true, message: '输入手机号', trigger: ['blur', 'change'] },
           // 自定义校验手机号
-          { validator: cheanMonile, trigger: ['blur', 'change'] }
+          { validator: chcekMobile, trigger: ['blur', 'change'] }
         ],
         password: [
           { required: true, message: '输入密码', trigger: ['blur', 'change'] },
@@ -98,6 +116,7 @@ export default {
     }
   },
   methods: {
+    //   user组件   ,login异步函数名
     ...mapActions('user', ['login']),
     showPwd() {
       if (this.passwordType === 'password') {
@@ -110,9 +129,11 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(async valid => {
+      // console.log('登录')
+      this.$refs.loginForm.validate(async(valid) => {
         if (!valid) return
         this.loading = true
+        // 利用mapActions导入数据--->this.loginForm
         await this.login(this.loginForm)
         this.loading = false
         this.$router.push('/')

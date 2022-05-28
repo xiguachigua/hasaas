@@ -9,10 +9,17 @@ export function reqLogin(data) {
   })
 }
 
-export function getInfo(token) {
+export function reqGetProfle() {
+  return request({
+    method: 'post',
+    url: '/sys/profile'
 
+  })
 }
 
-export function logout() {
-
+export function reqGetBaseInfo(id) {
+  return request({
+    method: 'get',
+    url: `/sys/user/${id}`
+  })
 }

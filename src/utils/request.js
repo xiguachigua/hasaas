@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+
+import store from '@/store'
 // create an axios instance
 // process.env当前进程的环境变量
 const service = axios.create({
@@ -9,6 +11,17 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
+// 响应拦截器
+
+service.interceptors.request.use(config => {
+  const token = store.getters.token
+  config.headers.Authorization = 'Bearer ' + token
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
+// 请求拦截器
 service.interceptors.response.use(response => {
   const res = response.data
   const { message, success } = res
