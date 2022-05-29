@@ -1,3 +1,4 @@
+// 函数式组件 通过 render渲染
 <script>
 export default {
   name: 'MenuItem',
