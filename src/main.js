@@ -17,21 +17,27 @@ import '@/icons' // icon
 // 导入权限认证
 import '@/permission' // permission control
 
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online ! ! !
+/* import * as directives from '@/directives'
+// 批量注册全局的自定义指令
+Object.keys(directives).forEach(key => {
+  Vue.directive(key, directives[key])
+})
  */
-
-/* if (process.env.NODE_ENV === 'production') {
-  const { mockXHR } = require('../mock')
-  mockXHR()
-}
- */
-
+import { imgerror, color } from '@/directives'
+Vue.directive('imgerror', imgerror)
+Vue.directive('color', color)
+// 定义全局自定义指令
+/* Vue.directive('imgerror', {
+  // el指令所在的元素
+  // binding  指令的相关信息对象 binding.value指令的值
+  inserted(el, bindings) {// bindings 里面是指令的参数信息对象   // el 指令所在dom元素   // 会在当前指令作用的dom元素 插入之后执行
+    // console.log(el, bindings)
+    el.onerror = function() {
+      // console.log('图片加载失败了'), 设置备用图片地址
+      el.src = bindings.value
+    }
+  }
+}) */
 // 注册elementUI 导入语言包
 
 // set ElementUI lang to EN

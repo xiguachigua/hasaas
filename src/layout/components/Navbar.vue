@@ -14,7 +14,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- <img src="@/assets/common/bigUserHeader.png" class="user-avatar"> -->
-          <img :src="staffPhoto" class="user-avatar">
+          <img v-imgerror="defaultImg" :src="staffPhoto" class="user-avatar">
           <!-- <span class="name">{{ $store.state.user.userInfo.username }}</span> -->
           <!-- <span class="name">{{ $store.getters.name }}</span> -->
           <span class="name">{{ name }}</span><!--映射-->
@@ -29,7 +29,7 @@
           <a target="_blank" href="https://gitee.com/xigua2424134852_admin/rhsaas-vue-renzi-xiangmu/">
             <el-dropdown-item>Gitee</el-dropdown-item>
           </a>
-          <el-dropdown-item divided @click.native="logout">
+          <el-dropdown-item v-color="color" divided @click.native="logout">
             <span style="display:block;">退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -39,7 +39,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import Img from '@/assets/common/head.jpg'
+import { mapGetters, mapActions } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
@@ -47,6 +48,13 @@ export default {
   components: {
     // Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      defaultImg: Img,
+      color: 'red'
+      // defaultImg: 'https://img2.baidu.com/it/u=3500059723,1266209426&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500'
+    }
   },
   // created() {
   //   this.getUserInfo()
@@ -60,13 +68,17 @@ export default {
     ])
   },
   methods: {
-    // ...mapActions('user', ['getUserInfo']),
+    ...mapActions('user', ['getUserInfo', 'logout']),
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    logout() {
+      // 1.清除token
+      // 2.清除userInfo
+      // 3.跳转登录页面
+      this.$store.dispatch('user/logout')
+      // 发起一个退出的action
+      this.$router.push('/login')
     }
   }
 }

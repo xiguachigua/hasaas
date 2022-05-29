@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 
 import store from '@/store'
+import router from '@/router'
 // create an axios instance
 // process.env当前进程的环境变量
 const service = axios.create({
@@ -11,7 +12,7 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
-// 响应拦截器
+// 响应拦截器   携带token来
 
 service.interceptors.request.use(config => {
   const token = store.getters.token
@@ -31,7 +32,15 @@ service.interceptors.response.use(response => {
   }
   return res
 }, (error) => {
-  Message.error(error.message)
+  console.dir(error)
+  if (error.response.status === 401 && error.response.data.code === 10002) {
+    Message.error('登录失效')
+    store.dispatch('user/logout')
+    router.push('/login')
+  } else {
+    // 服务器错误, 404 500 505
+    Message.error(error.message)
+  }
   return Promise.reject(error)
 })
 
