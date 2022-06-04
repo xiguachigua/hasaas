@@ -9,6 +9,7 @@ import 'nprogress/nprogress.css' // 引入进度条样式4
 // 白名单
 const whihtList = ['/login', '/404']
 
+// 设置路由前置守卫
 router.beforeEach(async(to, from, next) => {
   NProgress.start()
   const token = store.getters.token
@@ -31,7 +32,7 @@ router.beforeEach(async(to, from, next) => {
     }
   }
 })
-
+// 设置路由后置守卫
 router.afterEach((to, from) => {
   setTimeout(function() {
     NProgress.done()

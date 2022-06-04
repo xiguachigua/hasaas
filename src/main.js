@@ -5,7 +5,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 // 导入elementui第三方组件库并设置语言包
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+// import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 // 设置全局样式
 import '@/styles/index.scss' // global css
 
@@ -17,6 +17,14 @@ import '@/icons' // icon
 // 导入权限认证
 import '@/permission' // permission control
 
+// 注册全局组件
+import component from '@/components'
+Vue.use(component)
+// 全局时间
+import * as filter from '@/filters'
+Object.keys(filter).forEach(k => {
+  Vue.filter(k, filter[k])
+})
 /* import * as directives from '@/directives'
 // 批量注册全局的自定义指令
 Object.keys(directives).forEach(key => {
@@ -41,9 +49,9 @@ Vue.directive('color', color)
 // 注册elementUI 导入语言包
 
 // set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
+// Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
+Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 

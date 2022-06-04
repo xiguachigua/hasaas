@@ -115,3 +115,25 @@ export function param2Obj(url) {
   })
   return obj
 }
+// 封装函数将列表型数据转换为树形数据
+// list :要转换的数据
+// value 根数据
+// 递归思想   一个函数自己调用自己   (死循环  需要条件结束)
+// 封装   递归     通过传输数据来执行并返回数据      导入按需导入到组件{transLisToTree}   使用
+export function transLisToTree(list, value) {
+  const arr = []
+  list.forEach(item => {
+    // 判断所有数据pid是根元素id  --> (1.调用之前数据传输过来了) 自己调用传入数据和id--->
+    // ---> 递归里面判断id是否大于根元素的   (理解:存在一个主id  如何加上他的下级--->
+    // ---> 将下级重新赋值    最后将他存入新数组并返回 )
+    if (item.pid === value) {
+      const children = transLisToTree(list, item.id)
+      // console.log(children)
+      if (children.length > 0) {
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
+}
