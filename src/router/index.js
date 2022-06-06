@@ -50,6 +50,15 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
+  }, {
+    path: '/import',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: '',
+      name: 'import',
+      component: () => import('@/views/import')
+    }]
   },
 
   // 404 page must be placed at the end !!!

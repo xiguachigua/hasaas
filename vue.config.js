@@ -38,8 +38,8 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://ihrm-java.itheima.net'
-        // target: 'http://localhost:3000'
+        // target: 'http://ihrm-java.itheima.net'
+        target: 'http://localhost:3000'
       }
     }
 

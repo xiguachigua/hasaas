@@ -9,8 +9,8 @@
           <span> 本月: 社保在缴 公积金在缴</span>
         </template>
         <template #right>
-          <el-button type="warning" size="small">excel导入</el-button>
-          <el-button type="danger" size="small">excel导出</el-button>
+          <el-button type="warning" size="small" @click="$router.push('/import?type=user')">excel导入</el-button>
+          <el-button type="danger" size="small" @click="exportExcel">excel导出</el-button>
           <el-button type="primary" size="small" @click="showDialog = true">新增员工</el-button>
         </template>
       </PageTools>
@@ -30,7 +30,7 @@
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template v-slot="{row}">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employees/dateil/${row.id}`)">查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
@@ -65,6 +65,7 @@ import AddEmployee from './components/add-employee.vue'
 import { reqGetEmployeeList, reqDelEmployee } from '@/api/employees'
 // 默认到入
 import EmployyeeEnum from '@/api/constant/employees'
+import employees from '@/api/constant/employees'
 export default {
   name: 'EmployeesIndex',
   components: {
@@ -85,11 +86,55 @@ export default {
     this.getUserEmp()
   },
   methods: {
+    async  exportExcel() {
+      const headersArr = ['姓名', '手机号', '入职日期', '聘用形式', '转正日期', '工号', '部门']
+      const headersRelations = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      const { data: { rows }} = await reqGetEmployeeList(1, this.total)
+      const newArr = []
+      rows.forEach(item => {
+        const arr = []
+        headersArr.forEach(value => {
+          const PackedIn = headersRelations[value]
+          if (PackedIn === 'formOfEmployment') {
+            const obj = employees.hireType.find(idz => idz === item[PackedIn])
+            const res = obj ? obj.value : '未知'
+            arr.push(item[res])
+          } else {
+            arr.push(item[PackedIn])
+          }
+        })
+        newArr.push(arr)
+      })
+      //  console.log(newArr)
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      import('@/vendor/Export2Excel').then(excel => {
+        excel.export_json_to_excel({
+          multiHeader,
+          merges: ['A1:A2', 'B1:F1', 'G1:G2'],
+          header: headersArr, // 表头 必填
+          data: newArr, // 具体数据 必填
+          filename: 'excel-list', // 非必填
+          autoWidth: true, // 非必填
+          bookType: 'xlsx' // 非必填
+        })
+      })
+    },
     // 删除
     async   Delete(id) {
       const res = await this.$confirm('你确定要删除吗?,提示消息').catch(err => err)
       if (res === 'cancel') return
       await reqDelEmployee(id)
+      if (this.list.length === 1 && this.page > 1) {
+        this.page--
+      }
       this.getUserEmp()
       this.$message.success('删除成功')
     },
@@ -102,11 +147,15 @@ export default {
     async getUserEmp() {
       this.loading = true
       const { data: { rows, total }} = await reqGetEmployeeList(this.page, this.pageSize)
-      this.list = rows
+      console.log(total)
+      console.log(rows)
       this.total = total
+      this.list = rows
       this.loading = false
     },
+    //
     handleCurrentChange(newPage) {
+      console.log(newPage)
       this.page = newPage
       this.getUserEmp()
     }
