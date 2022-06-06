@@ -1,20 +1,8 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <div>
-      <!-- 原生精灵图写法 -->
-      <svg>
-        <use xlink:href="#icon-zip" />
-      </svg>
-      <!-- 组件用法   封装后直接用 -->
-      <svg-icon icon-class="bug" />
-    </div>
-  </div>
+  <ImagUpload :limit="2" />
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
-
 export default {
   name: 'Dashboard',
   computed: {
